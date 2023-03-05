@@ -1,0 +1,132 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper
+  PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+  "https://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="com.itwillbs.mappers.crewMapper">
+
+<!-- 게시글 -->
+	<insert id="insertCrew">
+		insert into crew  (crew_num
+						 , user_id
+						 , crew_category
+						 , crew_subject
+						 , crew_content
+						 , crew_readcount
+						 , crew_date
+						 ) 
+					values (#{crewNum}
+						 , #{userId}
+						 , #{crewCategory}
+						 , #{crewSubject}
+						 , #{crewContent}
+						 , #{crewReadcount}
+						 , #{crewDate}
+						 )
+	</insert>
+
+	<select id="getMaxNum" resultType="java.lang.Integer">
+		select max(crew_num)
+		  from crew
+	</select>
+	
+	<select id="getCrewList" resultType="com.itwillbs.domain.CrewDTO">
+		SELECT c.crew_num
+			 , c.user_id
+			 , c.crew_category
+			 , c.crew_subject
+			 , c.crew_content
+			 , c.crew_readcount
+			 , c.crew_date
+			 , (SELECT count(*) 
+		  		  FROM crew_reply r 
+				 WHERE r.crew_num = c.crew_num) 
+			   AS reply_count
+			 , (SELECT sum(cl_check)
+			 	  FROM crew_like l
+			 	 WHERE l.crew_num = c.crew_num)
+			   AS like_count
+		  FROM crew c
+		 ORDER BY c.crew_num DESC limit #{startRow}, #{pageSize}
+	</select>
+	
+	<!-- 이전글 -->
+	<select id="getCrewPrevNum" resultType="com.itwillbs.domain.CrewDTO">
+		SELECT crew_num
+			 , crew_subject
+  	 	  FROM crew
+ 		 WHERE crew_num = (SELECT crew_num FROM crew WHERE crew_num <![CDATA[<]]> #{crewNum} ORDER BY crew_num DESC LIMIT 1);
+	</select>
+	
+	<!-- 다음글 -->
+	<select id="getCrewLextNum" resultType="com.itwillbs.domain.CrewDTO">
+		SELECT crew_num
+			 , crew_subject
+		  FROM crew
+ 		 WHERE crew_num = (SELECT crew_num FROM crew WHERE crew_num <![CDATA[>]]> #{crewNum} ORDER BY crew_num LIMIT 1);
+	</select>
+	
+	<select id="getCrewCount" resultType="java.lang.Integer">
+		select count(*)
+		from crew
+	</select>
+	
+	<select id="getCrew" resultType="com.itwillbs.domain.CrewDTO">
+		select crew_num
+			 , user_id
+			 , crew_category
+			 , crew_subject
+			 , crew_content
+			 , crew_readcount
+			 , crew_date
+			 , (SELECT count(*) 
+		  		  FROM crew_reply r 
+				 WHERE r.crew_num = c.crew_num) 
+			   AS reply_count
+			 , (SELECT sum(cl_check)
+			 	  FROM crew_like l
+			 	 WHERE l.crew_num = c.crew_num)
+			   AS like_count
+		  from crew c
+		 where crew_num = #{crewNum}
+	</select>
+	
+	<update id="updateReadcount">
+		update crew
+		   set crew_readcount = crew_readcount+1 
+		 where crew_num = #{crewNum}
+	</update>
+
+	<update id="updateCrew">
+		update crew
+		   set crew_subject = #{crewSubject}
+		     , crew_category = #{crewCategory}
+			 , crew_content = #{crewContent}
+		 where crew_num = #{crewNum}
+	</update>
+	
+	<delete id="deleteCrew">
+		delete from crew
+		 where crew_num = #{crewNum}
+	</delete>
+	
+<!-- 게시글 -->
+
+
+<!-- 댓글 -->
+
+<!-- 댓글 -->
+
+
+<!-- 좋아요 -->
+	<select id="getLikedCount">
+		SELECT count(*)
+		  FROM crew_like
+		 WHERE crew_num = #{crewNum}
+	</select>
+
+<!-- 좋아요 -->
+
+
+
+</mapper>

@@ -1,0 +1,36 @@
+package com.itwillbs.service;
+
+import java.util.List;
+
+import com.itwillbs.domain.CrewDTO;
+import com.itwillbs.domain.CrewPageDTO;
+
+public interface CrewService {
+	
+	// 글 작성하기
+	public void insertCrew(CrewDTO crewDTO);
+
+	// List<BoardDTO> 리턴할형 getCrewList(pageDTO dto);
+	public List<CrewDTO> getCrewList(CrewPageDTO pageDTO);
+	
+	// 이전글
+	public CrewDTO getCrewPrevNum(int num);
+	
+	// 다음글
+	public CrewDTO getCrewNextNum(int num);
+	
+	public int getCrewCount();	
+	
+	// 글 내용 가져오기
+	public CrewDTO getCrew(int num);
+	
+	// 조회수 업데이트
+	public void updateReadcount(int num);
+	
+	// 글 수정
+	public void updateCrew(CrewDTO crewDTO);
+	
+	// 글 삭제
+	public void deleteCrew(int num);
+	
+}

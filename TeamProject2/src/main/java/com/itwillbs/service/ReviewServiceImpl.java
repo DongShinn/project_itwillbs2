@@ -1,0 +1,169 @@
+package com.itwillbs.service;
+
+import java.sql.Timestamp;
+import java.util.List;
+
+import javax.inject.Inject;
+
+import org.springframework.stereotype.Service;
+
+import com.itwillbs.dao.ReviewDAO;
+import com.itwillbs.domain.ReviewDTO;
+import com.itwillbs.domain.ReplyDTO;
+import com.itwillbs.domain.RePageDTO;
+
+@Service
+public class ReviewServiceImpl implements ReviewService{
+	//자동 객체생성 부모=자식
+	@Inject
+	private ReviewDAO reviewDAO;
+	
+	@Override
+	public void insertReview(ReviewDTO dto) {
+		// name,subject,content
+		// num,readcount,date
+		// num = max(num) + 1 
+		
+		if(reviewDAO.getMaxNum()==null) {
+			//글이 없는 경우
+//			dto.setReview_Num(1);
+			dto.setReviewNum(1);
+		}else {
+			dto.setReviewNum(reviewDAO.getMaxNum()+1);
+		}
+		
+		dto.setReviewDate(new Timestamp(System.currentTimeMillis()));
+		
+		//메서드 호출
+		reviewDAO.insertReview(dto);
+	}
+
+	@Override
+	public List<ReviewDTO> getReviewList(RePageDTO dto) {
+		int review_Num = dto.getReview_Num();
+		// startRow 구하기
+		int startRow=(dto.getCurrentPage()-1)*dto.getPageSize()+1;
+		// endRow 구하기
+		int endRow=startRow+dto.getPageSize()-1;
+		
+		// 디비 limit startRow-1 
+		dto.setStartRow(startRow-1);
+		dto.setEndRow(endRow);
+		dto.setReview_Num(review_Num);
+		return reviewDAO.getReviewList(dto);
+	}
+
+	@Override
+	public int getReviewCount() {
+		return reviewDAO.getReviewCount();
+	}
+
+	@Override
+	public void updateReadcount(int num) {
+		reviewDAO.updateReadcount(num);
+		
+	}
+
+	@Override
+	public ReviewDTO getReview(int num) {
+		return reviewDAO.getReview(num);
+	}
+
+	@Override
+	public void updateReview(ReviewDTO dto) {
+		reviewDAO.updateReview(dto);
+	}
+
+	@Override
+	public void deleteReview(int num) {
+		reviewDAO.deleteReview(num);
+	}
+
+	//댓글
+	@Override
+	public void insertBoard(ReplyDTO boardDTO) {
+		// name subject content
+		// num readcount date
+		boardDTO.setReadcount(0);
+		boardDTO.setDate(new Timestamp(System.currentTimeMillis()));
+		//num 
+		if(reviewDAO.regetMaxNum()==null) {
+			//글없음
+			boardDTO.setNum(1);
+			// re_ref  일반글(기준글) = 그룹번호 일치
+			boardDTO.setRe_ref(1);
+		}else {
+			//글있음
+			boardDTO.setNum(reviewDAO.regetMaxNum()+1);
+			// re_ref  일반글(기준글) = 그룹번호 일치
+			boardDTO.setRe_ref(reviewDAO.regetMaxNum()+1);
+		}
+		
+//		일반글 => re_ref 일반글 번호 일치,  re_lev 0  re_seq 0
+		boardDTO.setRe_lev(0);
+		boardDTO.setRe_seq(0);
+		
+		//메서드 호출
+		reviewDAO.insertBoard(boardDTO);
+	}
+
+	@Override
+	public List<ReplyDTO> getBoardList(RePageDTO pageDTO) {
+		int startRow=(pageDTO.getCurrentPage()-1)*pageDTO.getPageSize()+1;
+		int endRow=startRow+pageDTO.getPageSize()-1;
+		
+		pageDTO.setStartRow(startRow-1);
+		pageDTO.setEndRow(endRow);
+		
+		return reviewDAO.getBoardList(pageDTO);
+	}
+
+	@Override
+	public int getBoardCount() {
+		return reviewDAO.getBoardCount();
+	}
+
+	@Override
+	public ReplyDTO getBoard(int num) {
+		
+		return reviewDAO.getBoard(num);
+	}
+
+	@Override
+	public void updateBoard(ReplyDTO boardDTO) {
+		reviewDAO.updateBoard(boardDTO);
+		
+	}
+
+	@Override
+	public void deleteBoard(ReplyDTO boardDTO) {
+		reviewDAO.deleteBoard(boardDTO);
+	}
+	
+	@Override
+	public void reinsertBoard(ReplyDTO boardDTO) {
+		// name subject content re_ref re_lev re_seq
+		// 답글 순서 재배치
+		reviewDAO.updateReSeq(boardDTO);		
+		
+		// num readcount date
+		boardDTO.setReadcount(0);
+		boardDTO.setDate(new Timestamp(System.currentTimeMillis()));
+		//num 
+		if(reviewDAO.regetMaxNum()==null) {
+			//글없음
+			boardDTO.setNum(1);
+		}else {
+			//글있음
+			boardDTO.setNum(reviewDAO.regetMaxNum()+1);
+		}
+		
+//		답글 => re_ref 그대로 사용,  re_lev +1  re_seq +1
+		boardDTO.setRe_lev(boardDTO.getRe_lev()+1);
+		boardDTO.setRe_seq(boardDTO.getRe_seq()+1);
+		
+		//메서드 호출
+		reviewDAO.insertBoard(boardDTO);
+	}
+
+}

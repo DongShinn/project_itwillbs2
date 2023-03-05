@@ -1,0 +1,75 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper
+  PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+  "https://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="com.itwillbs.mappers.photoMapper">
+
+	<insert id="insertPhoto">
+		insert into photo (photo_num
+						 , user_id
+						 , photo_content
+						 , photo_image
+						 , photo_readcount
+						 , photo_date
+						 ) 
+					values (#{photoNum}
+						 , #{userId}
+						 , #{photoContent}
+						 , #{photoImage}
+						 , #{photoReadcount}
+						 , #{photoDate}
+						 )
+	</insert>
+
+	<select id="getMaxNum" resultType="java.lang.Integer">
+		select max(photo_num)
+		  from photo
+	</select>
+	
+	<select id="getPhotoList" resultType="com.itwillbs.domain.PhotoDTO">
+		select photo_num
+			 , user_id
+			 , photo_content
+			 , photo_image
+			 , photo_readcount
+			 , photo_date
+		  from photo
+		 order by photo_num desc limit #{startRow}, #{pageSize}
+	</select>
+	
+	<select id="getPhotoCount" resultType="java.lang.Integer">
+		select count(*)
+		from photo
+	</select>
+	
+	<select id="getPhoto" resultType="com.itwillbs.domain.PhotoDTO">
+		select photo_num
+			 , user_id
+			 , photo_content
+			 , photo_image
+			 , photo_readcount
+			 , photo_date
+		  from photo
+		 where photo_num = #{photoNum}
+	</select>
+
+	<update id="updateReadcount">
+		update photo
+		   set photo_readcount = photo_readcount+1 
+		 where photo_num = #{photoNum}
+	</update>
+
+	<update id="updatePhoto">
+		update photo
+		   set photo_content = #{photoContent}
+			 , photo_image = #{photoImage}
+		 where photo_num = #{photoNum}
+	</update>
+	
+	<delete id="deletePhoto">
+		DELETE FROM photo
+		 WHERE photo_num = #{photoNum}
+	</delete>
+
+</mapper>

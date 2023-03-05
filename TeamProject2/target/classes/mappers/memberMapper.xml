@@ -1,0 +1,149 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+
+<!DOCTYPE mapper
+  PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+  "https://mybatis.org/dtd/mybatis-3-mapper.dtd">
+  
+<mapper namespace="com.itwillbs.mappers.memberMapper">
+
+	<!-- user table  -->
+	<insert id="userInsertMember">
+	insert into user_info(
+		user_id
+	   ,user_pass
+	   ,user_name
+	   ,user_brith
+	   ,user_gender
+	   ,user_email
+	   ,user_phone
+	   ,user_address
+	   ,user_sport
+	   ,user_area
+	   ,user_point) 
+	values(
+		#{userId}
+	   ,#{userPass}
+	   ,#{userName}
+	   ,#{userBrith}
+	   ,#{userGender}
+	   ,#{userEmail}
+	   ,#{userPhone}
+	   ,#{userAddress}
+	   ,#{userSport}
+	   ,#{userArea}
+	   ,#{userPoint})
+	</insert>
+	 	
+	<select id="userCheck" resultType="com.itwillbs.domain.MemberDTO">
+	 	select 
+	 	user_id as userId
+	   ,user_pass as userPass
+	   ,user_name as userName
+	   ,user_brith as userBrith
+	   ,user_gender as userGender
+	   ,user_email as userEmail
+	   ,user_phone as userPhone
+	   ,user_address as userAddress
+	   ,user_sport as userSport
+	   ,user_area as userArea
+	   from user_info 
+	   where user_id = #{userId} 
+	   and user_pass = #{userPass}
+	</select>
+	
+	<select id="userIdCheck" resultType="com.itwillbs.domain.MemberDTO">
+	 	select 
+	 	user_id as userId
+	   ,user_pass as userPass
+	   ,user_name as userName
+	   ,user_brith as userBrith
+	   ,user_gender as userGender
+	   ,user_email as userEmail
+	   ,user_phone as userPhone
+	   ,user_address as userAddress
+	   ,user_sport as userSport
+	   ,user_area as userArea
+	   from user_info 
+	   where user_id = #{userId} 
+	</select>
+	
+    <select id="userGetMember" resultType="com.itwillbs.domain.MemberDTO">
+	   select 
+	 	user_id as userId
+	   ,user_pass as userPass
+	   ,user_name as userName
+	   ,user_brith as userBrith
+	   ,user_gender as userGender
+	   ,user_email as userEmail
+	   ,user_phone as userPhone
+	   ,user_address as userAddress
+	   ,user_sport as userSport
+	   ,user_area as userArea
+	   from user_info 
+	   where user_id = #{userId}
+    </select>
+    
+    <select id="userEmailCheck" resultType="com.itwillbs.domain.MemberDTO">
+	 	select 
+	 	user_id as userId
+	   ,user_pass as userPass
+	   ,user_name as userName
+	   ,user_brith as userBrith
+	   ,user_gender as userGender
+	   ,user_email as userEmail
+	   ,user_phone as userPhone
+	   ,user_address as userAddress
+	   ,user_sport as userSport
+	   ,user_area as userArea
+	   from user_info 
+	   where user_email = #{userEmail} 
+	</select>
+	
+    <select id="userGetMemberEmail" resultType="com.itwillbs.domain.MemberDTO">
+	   select 
+	 	user_id as userId
+	   ,user_pass as userPass
+	   ,user_name as userName
+	   ,user_brith as userBrith
+	   ,user_gender as userGender
+	   ,user_email as userEmail
+	   ,user_phone as userPhone
+	   ,user_address as userAddress
+	   ,user_sport as userSport
+	   ,user_area as userArea
+	   from user_info 
+	   where user_email = #{userEmail}
+   </select>
+	<!-- user table  -->
+	
+	<!-- admin -->
+	<select id="getMemberList" resultType="com.itwillbs.domain.MemberDTO">
+    select 
+	 	user_id as userId
+	   ,user_pass as userPass
+	   ,user_name as userName
+	   ,user_brith as userBrith
+	   ,user_gender as userGender
+	   ,user_email as userEmail
+	   ,user_phone as userPhone
+	   ,user_address as userAddress
+	   ,user_sport as userSport
+	   ,user_area as userArea
+    from user_info 
+    order by userId 
+    desc limit #{startRow}, #{pageSize}
+  </select>
+  
+  <select id="getMemberCount" resultType="java.lang.Integer">
+  	select count(*) 
+  	from user_info
+  </select>
+  
+  <delete id="userDeleteMember">
+  	delete 
+  	from user_info 
+  	where user_id = #{userId}
+  </delete>
+  <!-- admin -->
+
+</mapper>
