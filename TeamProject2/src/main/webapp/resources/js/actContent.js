@@ -41,7 +41,6 @@ $(function(){
 					'userId':$('#userId').val()
 				},
 				success:function(){
-					console.log('찜하기 성공');
 				}
 			});
 		}
@@ -132,13 +131,13 @@ marker.setMap(map);
 
 $(function(){
 	var actLocation=$('#actLocation').val();
-		console.log(actLocation);
 	$.ajax({
 		url:'https://dapi.kakao.com/v2/local/search/address.json?query='+encodeURIComponent(actLocation),
 		type:'GET',
 		headers: {'Authorization' : 'KakaoAK d50a74d7127bba5b2b8fbb16bcd818f8'},
 		success:function(data){
 	       console.log(data);
+	       console.log(data.documents[0].road_address.region_2depth_name);
 	       var x = data.documents[0].x;
 	       var y = data.documents[0].y;
 	       

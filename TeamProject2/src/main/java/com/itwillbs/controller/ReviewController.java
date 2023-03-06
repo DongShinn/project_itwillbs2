@@ -60,7 +60,6 @@ public class ReviewController {
 		// 아이디 비밀번호 틀림 => memberDTO null 넘어옴 => "정보틀림" 뒤로이동
 //	    session.setAttribute("id", memberDTO.getUser_id());
 		// 글쓰기 메서드 호출()
-		System.out.println(dto.toString());
 		// 업로드 파일명 => 랜덤문자_파일이름 => 파일이름 중복 안됨
 		UUID uuid = UUID.randomUUID();
 		String filename = uuid.toString() + "_" + file.getOriginalFilename();
@@ -144,9 +143,7 @@ public class ReviewController {
 	
 	@RequestMapping(value = "/review/content", method = RequestMethod.GET)	
 	public String content(HttpServletRequest request,Model model) throws Exception {
-		System.out.println("/review/content");
 		ReplyDTO boardDTO = new ReplyDTO();
-		System.out.println(boardDTO.toString()); 
 		
 		// /board/content?num2
 		int review_Num = Integer.parseInt(request.getParameter("review_Num"));
@@ -201,18 +198,14 @@ public class ReviewController {
 	
 	@RequestMapping(value = "/review/update", method = RequestMethod.GET)
 	public String update(HttpServletRequest request, Model model) {
-		System.out.println("update");
 		int num = Integer.parseInt(request.getParameter("num"));
 		ReviewDTO dto = reviewService.getReview(num);
-		System.out.println(dto.toString());
 		model.addAttribute("dto", dto);
 		return "review/updateForm";
 	}
 	
 	@RequestMapping(value = "/review/updatePro", method = RequestMethod.POST)
 	public String updatePro(ReviewDTO dto) {
-		System.out.println("BoardController updatePro() ");
-		System.out.println(dto.toString());
 		reviewService.updateReview(dto);
 		
 		return "redirect:/review/list";
@@ -282,10 +275,6 @@ public class ReviewController {
 	
 	@RequestMapping(value = "/board/rewritePro", method = RequestMethod.POST)	
 	public String rewritePro(ReplyDTO boardDTO, HttpServletRequest request, Model model) {
-		System.out.println("/board/rewritePro");
-		
-		System.out.println(boardDTO.toString()); 	
-		// insertBoard(boardDTO) 메서드 호출
 		
 		int review_Num = Integer.parseInt(request.getParameter("review_Num"));
 //		// 조회수 증가

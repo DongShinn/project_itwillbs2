@@ -47,7 +47,10 @@
 		SELECT 
 			   A.ACT_NUM
 			 , A.ACT_TITLE
-			 , CASE WHEN CHAR_LENGTH(A.COMPANY_NAME) > 5 THEN CONCAT(SUBSTR(A.COMPANY_NAME, 1, 6),'..') ELSE A.COMPANY_NAME END "COMPANY_NAME"
+			 , CASE WHEN CHAR_LENGTH(A.COMPANY_NAME) > 5 
+			 		THEN CONCAT(SUBSTR(A.COMPANY_NAME, 1, 6),'..') 
+			 		ELSE A.COMPANY_NAME 
+			 		 END "COMPANY_NAME"
 			 , A.ACT_CONTENT
 			 , A.ACT_PRICE
 			 , A.ACT_PHONE
@@ -65,26 +68,31 @@
   		  						   GROUP BY ACT_NUM 
   		  						   ORDER BY ACT_NUM) AI
     		ON A.ACT_NUM = AI.ACT_NUM
-    	 WHERE ACT_TITLE LIKE CONCAT('%', #{scTitle, jdbcType=VARCHAR}, '%')
-    	   AND ACT_CATEGORY LIKE CONCAT('%', #{scCategory, jdbcType=VARCHAR}, '%')
+    	 WHERE ACT_TITLE LIKE '%${scTitle, jdbcType=VARCHAR}%'
+    	   AND ACT_CATEGORY LIKE '%${scCategory, jdbcType=VARCHAR}%'
 		   AND A.ACT_NUM IN (SELECT ACT_NUM
-						   	   FROM (SELECT A.ACT_NUM, IFNULL(W.USER_ID,'') 'USER_ID'
+						   	   FROM (SELECT A.ACT_NUM, IFNULL(W.USER_ID,'') 'USER_ID', 
+						   	   				SUBSTRING_INDEX(SUBSTRING_INDEX(A.ACT_LOCATION,' ',2),' ',-1) "ACT_LOCATION"
 								   	   FROM ACTIVITY A LEFT JOIN WISHLIST W
 									 	 ON A.ACT_NUM = W.ACT_NUM) A
-							  WHERE USER_ID LIKE CONCAT('%', #{sessionId, jdbcType=VARCHAR}, '%'))
+							  WHERE USER_ID LIKE '%${sessionId, jdbcType=VARCHAR}%'
+							  <if test="!actLocation=equals('') and actLocation != null">
+							    AND ACT_LOCATION IN (#{actLocation})
+							  </if>
+							  )
 	  ORDER BY ACT_NUM DESC LIMIT #{startRow},#{pageSize}
 	</select>
 	
 	<select id="getActivityCount" resultType="java.lang.Integer">
 		SELECT COUNT(*)
 		  FROM ACTIVITY
-	     WHERE ACT_TITLE LIKE CONCAT('%', #{scTitle, jdbcType=VARCHAR}, '%')
-   	       AND ACT_CATEGORY LIKE CONCAT('%', #{scCategory, jdbcType=VARCHAR}, '%')
+	     WHERE ACT_TITLE LIKE '%${scTitle, jdbcType=VARCHAR}%'
+   	       AND ACT_CATEGORY LIKE '%${scCategory, jdbcType=VARCHAR}%'
    	       AND ACT_NUM IN (SELECT ACT_NUM
 					   	     FROM (SELECT A.ACT_NUM, IFNULL(W.USER_ID,'') 'USER_ID'
 							   	     FROM ACTIVITY A LEFT JOIN WISHLIST W
 								 	   ON A.ACT_NUM = W.ACT_NUM) A
-						    WHERE USER_ID LIKE CONCAT('%', #{sessionId, jdbcType=VARCHAR}, '%'))
+						    WHERE USER_ID LIKE '%${sessionId, jdbcType=VARCHAR}%')
 	</select>
 	
 	<select id="getActivity" resultType="com.itwillbs.domain.ActivityDTO">
@@ -160,7 +168,7 @@
 		DELETE 
 		  FROM WISHLIST
 		 WHERE ACT_NUM=#{actNum}
-		   AND USER_ID LIKE CONCAT('%', #{userId, jdbcType=VARCHAR}, '%')
+		   AND USER_ID LIKE '%${userId, jdbcType=VARCHAR}%'
 	</delete>
 	
 	<select id="checkWishList" resultType="String">

@@ -20,54 +20,35 @@ function getList(){
 						var category = $('#category').val();
 						var title = $('#title').val();
 						var sessionId = $('#wishListCheck').val();
+						var actLocation = item.actLocation;
+						var location = getLocation(location);
+						
 						console.log(category);
 						console.log(title);
 						console.log(sessionId);
 						
 						var list = '';
 						list += '<div class="col-lg-4 col-md-6">'
-						list += '<div class="single-latest-news">'
-						list +=	'<a href="'+ctx+'/activity/actContent?actNum='+item.actNum+'">'
-						list +=		'<div class="latest-news-bg news-bg-1">'
-						list +=			'<img alt="" src="'+ctx+'/resources/upload/'+item.imgNameKey+'" width=500px height=250px/>'		
-						list +=		'</div>'
-						list +=	'</a>'
-						list +=	'<div class="news-text-box">'
-						list +=		'<h3><a href="'+ctx+'/activity/actContent?actNum='+item.actNum+'">'+item.actTitle+'</a></h3>'
-						list +=		'<p class="blog-meta">'
-						list +=			'<span class="author"><img alt="" src="'+ctx+'/resources/images/building.png" width=13px height=13px/>'+item.companyName+'</span>'
-						list +=			'<span class="date"><img alt="" src="'+ctx+'/resources/images/marker.png" width=13px height=13px/>'+item.actLocation+'</span>'
-						list +=		'</p>'
-						list +=		'<p class="excerpt">'+item.actPrice+' 원</p>'
-						list +=		'<a href="'+ctx+'/activity/actContent?actNum='+item.actNum+'" class="read-more-btn">read more</a>'
-						list +=	'</div>'
+						list += 	'<div class="single-latest-news">'
+						list +=			'<a href="'+ctx+'/activity/actContent?actNum='+item.actNum+'">'
+						list +=			'<div class="latest-news-bg news-bg-1">'
+						list +=				'<img alt="" src="'+ctx+'/resources/upload/'+item.imgNameKey+'" width=500px height=250px/>'		
+						list +=			'</div>'
+						list +=			'</a>'
+						list +=			'<div class="news-text-box">'
+						list +=				'<h3><a href="'+ctx+'/activity/actContent?actNum='+item.actNum+'">'+item.actTitle+'</a></h3>'
+						list +=				'<p class="blog-meta">'
+						list +=					'<span class="author"><img alt="" src="'+ctx+'/resources/images/building.png" width=13px height=13px/>'+item.companyName+'</span>'
+						list +=					'<span class="date"><img alt="" src="'+ctx+'/resources/images/marker.png" width=13px height=13px/>'+item.actLocation+'</span>'
+						list +=				'</p>'
+						list +=				'<p class="excerpt">'+item.actPrice+' 원</p>'
+						list +=				'<a href="'+ctx+'/activity/actContent?actNum='+item.actNum+'" class="read-more-btn">read more</a>'
+						list +=			'</div>'
+						list += 	'</div>'
 						list += '</div>'
-						list += '</div>'
-						list = list.replaceAll("%20", ' ').replaceAll("%3E", '>').replaceAll("%3C", '<');
+						// list = list.replaceAll("%20", ' ').replaceAll("%3E", '>').replaceAll("%3C", '<');
 						$('#actList').append(list);
 						
-						/*
-						$('#actList').append('<div class="col-lg-4 col-md-6">');
-						$('#actList').append('<div class="single-latest-news">');
-						$('#actList').append('<a href="'+ctx+'/activity/actContent?actNum='+item.actNum+'">');
-						$('#actList').append('<div class="latest-news-bg news-bg-1">');
-						$('#actList').append('<img alt="" src="'+ctx+'/resources/upload/'+item.imgNameKey+'" width=500px height=250px />');
-						$('#actList').append('</div>');
-						$('#actList').append('</a>');
-						$('#actList').append('<div class="news-text-box">');
-						$('#actList').append('<h3><a href="'+ctx+'/activity/actContent?actNum='+item.actNum+'">'+item.actTitle+'</a></h3>');
-						$('#actList').append('<p class="blog-meta">');
-						$('#actList').append('<span class="author"><img alt="" src="'+ctx+'/resources/images/building.png" width=13px height=13px/>'+item.companyName+'</span>');
-						$('#actList').append('<span class="date"><img alt="" src="'+ctx+'/resources/images/marker.png" width=13px height=13px/>'+item.actLocation+'</span>');
-						$('#actList').append('</p>');
-						$('#actList').append('<p class="excerpt">'+item.actPrice+' 원</p>');
-						$('#actList').append('<a href="'+ctx+'/activity/actContent?actNum='+item.actNum+'" class="read-more-btn">read more</a>');
-						$('#actList').append('</div>'); 
-						$('#actList').append('</div>'); 
-						$('#actList').append('</div>'); 
-						
-						$('#actList').append('<a href="'+ctx+'/activity/actContent?actNum='+item.actNum+'"><div class="latest-news-bg news-bg-1"><img alt="" src="'+ctx+'/resources/upload/'+item.imgNameKey+'" width=500px height=250px /></div></a><div class="news-text-box"><h3><a href="'+ctx+'/activity/actContent?actNum='+item.actNum+'">'+item.actTitle+'</a></h3><p class="blog-meta"><span class="author"><img alt="" src="'+ctx+'/resources/images/building.png" width=13px height=13px/>'+item.companyName+'</span><span class="date"><img alt="" src="'+ctx+'/resources/images/marker.png" width=13px height=13px/>'+item.actLocation+'</span></p><p class="excerpt">'+item.actPrice+' 원</p><a href="'+ctx+'/activity/actContent?actNum='+item.actNum+'" class="read-more-btn">read more</a></div>');
-						*/
 					});
 				}
 			});
@@ -105,5 +86,20 @@ $("#category").on('change',function(){
 	getList();
 });
 
-
-
+function getLocation(actLocation){
+	var actLocation = actLocation;
+	$.ajax({
+		url:'https://dapi.kakao.com/v2/local/search/address.json?query='+encodeURIComponent(actLocation),
+		type:'GET',
+		headers: {'Authorization' : 'KakaoAK d50a74d7127bba5b2b8fbb16bcd818f8'},
+		success:function(data){
+	       var location = data.documents[0].road_address.region_2depth_name;
+	       console.log(location);
+	       
+	       return location;
+		},
+		error : function(e){
+			console.log(e);
+	   }
+	});
+};
