@@ -86,6 +86,7 @@ $("#category").on('change',function(){
 	getList();
 });
 
+
 function getLocation(actLocation){
 	var actLocation = actLocation;
 	$.ajax({

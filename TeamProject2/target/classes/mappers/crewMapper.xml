@@ -33,7 +33,9 @@
 	<select id="getCrewList" resultType="com.itwillbs.domain.CrewDTO">
 		SELECT c.crew_num
 			 , c.user_id
-			 , c.crew_category
+			 , c.act_category
+			 , c.act_location
+			 , c.act_title
 			 , c.crew_subject
 			 , c.crew_content
 			 , c.crew_readcount
@@ -73,12 +75,14 @@
 	
 	<select id="getCrew" resultType="com.itwillbs.domain.CrewDTO">
 		select crew_num
-			 , user_id
-			 , crew_category
-			 , crew_subject
-			 , crew_content
-			 , crew_readcount
-			 , crew_date
+			 , c.user_id
+			 , c.act_category
+			 , c.act_location
+			 , c.act_title
+			 , c.crew_subject
+			 , c.crew_content
+			 , c.crew_readcount
+			 , c.crew_date
 			 , (SELECT count(*) 
 		  		  FROM crew_reply r 
 				 WHERE r.crew_num = c.crew_num) 
